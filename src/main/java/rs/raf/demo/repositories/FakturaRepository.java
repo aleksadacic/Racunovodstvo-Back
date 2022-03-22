@@ -1,14 +1,31 @@
 package rs.raf.demo.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import rs.raf.demo.model.Faktura;
 import rs.raf.demo.model.TipFakture;
 
 import java.util.List;
+import java.util.Optional;
 
+@Repository
 public interface FakturaRepository extends JpaRepository<Faktura, Long> {
-    List<Double> findProdajnaVrednostByTipFakture(TipFakture tipFakture);
-    List<Double> findRabatByTipFakture(TipFakture tipFakture);
-    List<Double> findPorezByTipFakture(TipFakture tipFakture);
-    List<Double> findZaNaplatuByTipFakture(TipFakture tipFakture);
+
+    public List<Faktura> findAll();
+
+    public Optional<Faktura> findByFakturaId(Long fakturaId);
+
+    @Query("select f.prodajnaVrednost from Faktura f where f.tipFakture = :tipFakture")
+    List<Double> findProdajnaVrednostForTipFakture(TipFakture tipFakture);
+
+    @Query("select f.rabat from Faktura f where f.tipFakture = :tipFakture")
+    List<Double> findRabatForTipFakture(TipFakture tipFakture);
+
+    @Query("select f.porez from Faktura f where f.tipFakture = :tipFakture")
+    List<Double> findPorezForTipFakture(TipFakture tipFakture);
+
+    @Query("select f.naplata from Faktura f where f.tipFakture = :tipFakture")
+    List<Double> findNaplataForTipFakture(TipFakture tipFakture);
 }
