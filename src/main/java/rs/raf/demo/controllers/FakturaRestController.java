@@ -7,10 +7,10 @@ import rs.raf.demo.model.Faktura;
 import rs.raf.demo.services.IFakturaService;
 import rs.raf.demo.services.impl.FakturaService;
 
+import javax.validation.Valid;
 import java.util.List;
-import rs.raf.demo.model.TipFakture;
-
 import java.util.Map;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -36,28 +36,18 @@ public class FakturaRestController {
     @GetMapping(value = "/izlazneFakture", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getIzlazneFakture() {
         List<Faktura> izlazneFakture = fakturaService.findIzlazneFakture();
-        if (izlazneFakture.isEmpty()) {
+        if(izlazneFakture.isEmpty()){
             return ResponseEntity.notFound().build();
-        } else {
+        }else{
             return ResponseEntity.ok(izlazneFakture);
         }
     }
 
     @GetMapping(value = "/sume", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSume(@RequestParam String tipFakture){
-        TipFakture tip = TipFakture.valueOf(tipFakture);
-        Double sumaPorez = fakturaService.calculateSumPorez(tip);
-        Double sumaProdajnaVrednost = fakturaService.calculateSumProdajnaVrednost(tip);
-        Double sumaRabat = fakturaService.calculateSumRabat(tip);
-        Double sumaZaNaplatu = fakturaService.calculateSumNaplata(tip);
-        Map response = Map.of(
-                "sumaPorez", sumaPorez,
-                "sumaProdajnaVrednost", sumaProdajnaVrednost,
-                "sumaRabat", sumaRabat,
-                "sumaZaNaplatu", sumaZaNaplatu
-        );
-        if(!response.isEmpty()) {
-            return ResponseEntity.ok(response);
+        Map<String, Double> sume = fakturaService.getSume(tipFakture);
+        if(!sume.isEmpty()) {
+            return ResponseEntity.ok(sume);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -72,4 +62,24 @@ public class FakturaRestController {
         }
     }
 
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createFaktura(@Valid @RequestBody Faktura faktura){
+        return ResponseEntity.ok(fakturaService.save(faktura));
+    }
+
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateFaktura(@Valid @RequestBody Faktura faktura){
+        Optional<Faktura> optionalFaktura = fakturaService.findById(faktura.getFakturaId());
+        if(optionalFaktura.isPresent()) {
+            return ResponseEntity.ok(fakturaService.save(faktura));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> deleteFaktura(@PathVariable("id") Long id){
+        fakturaService.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 }
