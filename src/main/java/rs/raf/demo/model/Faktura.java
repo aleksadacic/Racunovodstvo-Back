@@ -42,8 +42,9 @@ public class Faktura {
     @Column
     @Enumerated(EnumType.STRING)
     private TipFakture tipFakture;
-
     @ManyToOne
     @JoinColumn(name = "preduzeceId")
     private Preduzece preduzece;
+    @OneToOne(mappedBy = "faktura")
+    private DnevnikKnjizenja dnevnikKnjizenja;
 }
