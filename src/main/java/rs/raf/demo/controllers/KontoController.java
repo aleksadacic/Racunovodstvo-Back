@@ -1,5 +1,7 @@
 package rs.raf.demo.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +18,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/konto")
 public class KontoController {
-
     private final IKontoService kontoService;
 
     public KontoController(KontoService kontoService) {
@@ -26,9 +27,8 @@ public class KontoController {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getKontnaGrupa(@PathVariable("id") Long id){
         try {
-            return ResponseEntity.ok(kontoService.findById(id));
+            return ResponseEntity.ok(kontoService.findKontoById(id));
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
     }
@@ -50,7 +50,6 @@ public class KontoController {
                 return ResponseEntity.ok(kontoService.findAllSorted(map));
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.ok(new ArrayList<>());
         }
     }
@@ -60,7 +59,6 @@ public class KontoController {
         try {
             return ResponseEntity.ok(kontoService.save(konto));
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
     }
@@ -70,7 +68,6 @@ public class KontoController {
         try {
             return ResponseEntity.ok(kontoService.update(konto.getKontoId()));
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
     }
@@ -81,7 +78,6 @@ public class KontoController {
             kontoService.deleteById(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
     }

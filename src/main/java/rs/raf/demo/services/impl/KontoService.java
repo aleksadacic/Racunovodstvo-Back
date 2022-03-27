@@ -25,9 +25,12 @@ public class KontoService implements IKontoService {
 
     @Override
     public Optional<Konto> findById(Long id) {
-        Optional<Konto> optionalKonto = kontoRepository.findById(id);
-        optionalKonto.orElseThrow();
-        return optionalKonto;
+        return kontoRepository.findById(id);
+    }
+
+    @Override
+    public Konto findKontoById(Long id) {
+        return findById(id).orElseThrow();
     }
 
     @Override
@@ -41,7 +44,7 @@ public class KontoService implements IKontoService {
     }
 
     @Override
-    public List<Konto> findAllSorted(Map<String, String> sort) throws Exception {
+    public List<Konto> findAllSorted(Map<String, String> sort) {
         List<Sort.Order> orders = new ArrayList<>();
         for (Map.Entry<String, String> criteria : sort.entrySet()) {
             if (criteria.getKey().equals("-")) {
@@ -50,7 +53,7 @@ public class KontoService implements IKontoService {
             else if (criteria.getKey().equals("+")) {
                 orders.add(new Sort.Order(Sort.Direction.ASC, criteria.getValue()));
             }
-            else throw new Exception("Undefined sort parameter!");
+            else throw new IllegalArgumentException();
         }
         return kontoRepository.findAll(Sort.by(orders));
     }
