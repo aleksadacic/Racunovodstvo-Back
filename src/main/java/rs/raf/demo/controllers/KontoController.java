@@ -33,7 +33,7 @@ public class KontoController {
         }
     }
 
-    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getKontneGrupe(@RequestParam("sort") String sort) {
         try {
             if (sort == null || sort.isEmpty())
@@ -54,7 +54,7 @@ public class KontoController {
         }
     }
 
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createKontnaGrupa(@Valid @RequestBody Konto konto) {
         try {
             return ResponseEntity.ok(kontoService.save(konto));
@@ -63,7 +63,7 @@ public class KontoController {
         }
     }
 
-    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateKontnaGrupa(@Valid @RequestBody Konto konto) {
         try {
             return ResponseEntity.ok(kontoService.update(konto.getKontoId()));

@@ -40,26 +40,41 @@ public class KontoService implements IKontoService {
 
     @Override
     public List<Konto> findAll() {
-        return kontoRepository.findAll(Sort.by("brojKonta").ascending());
+        List<Konto> kontos = new ArrayList<>(kontoRepository.findAll());
+        kontos.sort(Comparator.comparing(Konto::getBrojKonta));
+        return kontos;
     }
 
     @Override
     public List<Konto> findAllSorted(Map<String, String> sort) {
-        List<Sort.Order> orders = new ArrayList<>();
+        List<Comparator<Konto>> comparators = new ArrayList<>();
         for (Map.Entry<String, String> criteria : sort.entrySet()) {
-            if (criteria.getKey().equals("-")) {
-                orders.add(new Sort.Order(Sort.Direction.DESC, criteria.getValue()));
-            }
-            else if (criteria.getKey().equals("+")) {
-                orders.add(new Sort.Order(Sort.Direction.ASC, criteria.getValue()));
-            }
-            else throw new IllegalArgumentException();
+            comparators.add((o1, o2) -> compareAnyInKonto(o1, o2, criteria.getValue(), criteria.getKey()));
         }
-        return kontoRepository.findAll(Sort.by(orders));
+        Collections.reverse(comparators);
+        List<Konto> all = new ArrayList<>(kontoRepository.findAll());
+        for (Comparator<Konto> comp : comparators) {
+            all.sort(comp);
+        }
+        return all;
     }
 
     @Override
     public void deleteById(Long id) {
         kontoRepository.deleteById(id);
+    }
+
+    private int compareAnyInKonto(Konto k1, Konto k2, String field, String order) {
+        int orderValue = order.equals("+")? 1 : order.equals("-")? -1 : 1;
+        if (field.equals("naziv")) {
+            return orderValue * k1.getNaziv().compareTo(k2.getNaziv());
+        }
+        if (field.equals("brojKonta")) {
+            return orderValue * k1.getBrojKonta().compareTo(k2.getBrojKonta());
+        }
+        if (field.equals("kontoId")) {
+            return orderValue * k1.getKontoId().compareTo(k2.getKontoId());
+        }
+        throw new IllegalArgumentException();
     }
 }
