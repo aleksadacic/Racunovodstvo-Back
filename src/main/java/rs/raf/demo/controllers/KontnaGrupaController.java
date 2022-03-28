@@ -1,6 +1,8 @@
 package rs.raf.demo.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,14 +36,9 @@ public class KontnaGrupaController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getKontneGrupe(@RequestParam("sort") String sort) {
+    public ResponseEntity<?> getKontneGrupe(@RequestParam(defaultValue = "brojKonta", value = "sort") String[] sort) {
         try {
-            if (Utils.Strings.isEmpty(sort))
-                return ResponseEntity.ok(kontnaGrupaService.findAll());
-            else {
-                String[] params = sort.split(",");
-                return ResponseEntity.ok(kontnaGrupaService.findAllSorted(params));
-            }
+            return ResponseEntity.ok(kontnaGrupaService.findAll(sort));
         } catch (Exception e) {
             // #19 aleksadacic - vracamo praznu listu kako kaze dokumentacija ruta.
             return ResponseEntity.ok(new ArrayList<>());

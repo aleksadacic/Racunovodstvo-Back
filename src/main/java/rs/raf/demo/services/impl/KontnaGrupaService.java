@@ -38,13 +38,10 @@ public class KontnaGrupaService implements IKontnaGrupaService {
     }
 
     @Override
-    public List<KontnaGrupa> findAll() {
-        List<KontnaGrupa> kontos = new ArrayList<>(kontnaGrupaRepository.findAll());
-        kontos.sort(Comparator.comparing(KontnaGrupa::getBrojKonta));
-        return kontos;
-    }
+    public List<KontnaGrupa> findAll() {return kontnaGrupaRepository.findAll(); }
+
     @Override
-    public List<KontnaGrupa> findAllSorted(String[] sort) {
+    public List<KontnaGrupa> findAll(String[] sort) {
         return kontnaGrupaRepository.findAll(resolveSortingAndPagination(MIN_PAGE, MAX_SIZE, sort)).getContent();
     }
 
