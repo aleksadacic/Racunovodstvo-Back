@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.KontnaGrupa;
 import rs.raf.demo.services.IKontnaGrupaService;
-import rs.raf.demo.services.IService;
 import rs.raf.demo.services.impl.KontnaGrupaService;
 import rs.raf.demo.utils.Utils;
 
