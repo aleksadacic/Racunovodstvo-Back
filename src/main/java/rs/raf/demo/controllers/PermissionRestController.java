@@ -1,5 +1,6 @@
 package rs.raf.demo.controllers;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,6 +11,7 @@ import rs.raf.demo.services.impl.PermissionService;
 
 @CrossOrigin
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/permissions")
 public class PermissionRestController {
 
