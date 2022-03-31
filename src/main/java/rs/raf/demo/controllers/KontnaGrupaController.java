@@ -1,18 +1,18 @@
 package rs.raf.demo.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.KontnaGrupa;
 import rs.raf.demo.services.IKontnaGrupaService;
 import rs.raf.demo.services.impl.KontnaGrupaService;
-import rs.raf.demo.utils.Utils;
+import rs.raf.demo.utils.ApiUtil;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 @CrossOrigin
 @RestController
@@ -27,7 +27,7 @@ public class KontnaGrupaController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getKontnaGrupa(@PathVariable("id") String id){
+    public ResponseEntity<?> getKontnaGrupa(@PathVariable("id") String id) {
         try {
             return ResponseEntity.ok(kontnaGrupaService.findKontnaGrupaById(id));
         } catch (Exception e) {
@@ -36,40 +36,26 @@ public class KontnaGrupaController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getKontneGrupe(@RequestParam(defaultValue = "brojKonta", value = "sort") String[] sort) {
-        try {
-            return ResponseEntity.ok(kontnaGrupaService.findAll(sort));
-        } catch (Exception e) {
-            // #19 aleksadacic - vracamo praznu listu kako kaze dokumentacija ruta.
-            return ResponseEntity.ok(new ArrayList<>());
-        }
+    public ResponseEntity<?> getKontneGrupe(@RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
+                                            @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
+                                            @RequestParam(defaultValue = "brojKonta", value = "sort") String[] sort) {
+        Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
+        return ResponseEntity.ok(kontnaGrupaService.findAll(pageSort));
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createKontnaGrupa(@Valid @RequestBody KontnaGrupa kontnaGrupa) {
-        try {
-            return ResponseEntity.ok(kontnaGrupaService.save(kontnaGrupa));
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(kontnaGrupaService.save(kontnaGrupa));
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateKontnaGrupa(@Valid @RequestBody KontnaGrupa kontnaGrupa) {
-        try {
-            return ResponseEntity.ok(kontnaGrupaService.update(kontnaGrupa.getBrojKonta()));
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(kontnaGrupaService.update(kontnaGrupa.getBrojKonta()));
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteKontnaGrupa(@PathVariable String id) {
-        try {
-            kontnaGrupaService.deleteById(id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+        kontnaGrupaService.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }
