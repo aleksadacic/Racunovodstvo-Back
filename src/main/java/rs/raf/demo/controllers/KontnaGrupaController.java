@@ -28,11 +28,7 @@ public class KontnaGrupaController {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getKontnaGrupa(@PathVariable("id") String id) {
-        try {
-            return ResponseEntity.ok(kontnaGrupaService.findKontnaGrupaById(id));
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(kontnaGrupaService.findKontnaGrupaById(id));
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

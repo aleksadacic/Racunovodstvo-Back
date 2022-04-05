@@ -8,8 +8,6 @@ import rs.raf.demo.model.Koeficijent;
 import rs.raf.demo.services.IService;
 import rs.raf.demo.services.impl.KoeficijentService;
 
-import javax.print.attribute.standard.Media;
-
 @CrossOrigin
 @RestController
 @SecurityRequirement(name = "bearerAuth")
