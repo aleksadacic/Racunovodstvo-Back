@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.webjars.NotFoundException;
 import rs.raf.demo.model.KontnaGrupa;
 import rs.raf.demo.services.IKontnaGrupaService;
 import rs.raf.demo.services.impl.KontnaGrupaService;
@@ -53,7 +54,9 @@ public class KontnaGrupaController {
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateKontnaGrupa(@Valid @RequestBody KontnaGrupa kontnaGrupa) {
-        return ResponseEntity.ok(kontnaGrupaService.update(kontnaGrupa.getBrojKonta()));
+        if (kontnaGrupaService.findById(kontnaGrupa.getBrojKonta()).isPresent())
+            return ResponseEntity.ok(kontnaGrupaService.save(kontnaGrupa));
+        throw new EntityNotFoundException();
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,7 +66,6 @@ public class KontnaGrupaController {
             kontnaGrupaService.deleteById(id);
             return ResponseEntity.noContent().build();
         }
-
         throw new EntityNotFoundException();
     }
 }

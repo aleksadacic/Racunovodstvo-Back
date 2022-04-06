@@ -31,14 +31,6 @@ public class KontnaGrupaService implements IKontnaGrupaService {
         return kontnaGrupaRepository.findById(id);
     }
 
-    public KontnaGrupa findKontnaGrupaById(String id) {
-        return findById(id).orElseThrow(NoSuchElementException::new);
-    }
-
-    public KontnaGrupa update(String id) {
-        return save(findById(id).orElseThrow(NoSuchElementException::new));
-    }
-
     @Override
     public List<KontnaGrupa> findAll() {return kontnaGrupaRepository.findAll(); }
 
