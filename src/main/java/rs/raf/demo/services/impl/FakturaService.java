@@ -10,6 +10,7 @@ import rs.raf.demo.model.Faktura;
 import rs.raf.demo.model.enums.TipFakture;
 import rs.raf.demo.repositories.FakturaRepository;
 import rs.raf.demo.services.IFakturaService;
+import rs.raf.demo.utils.FakturaUtil;
 import rs.raf.demo.utils.Utils;
 
 import java.util.*;
@@ -35,26 +36,6 @@ public class FakturaService implements IFakturaService {
     @Override
     public Page<Faktura> findAll(Pageable pageSort) {
         return fakturaRepository.findAll(pageSort);
-    }
-
-    public List<Faktura> findUlazneFakture(){
-        List<Faktura> ulazneFakture = new ArrayList<>();
-        for(Faktura f : fakturaRepository.findAll()){
-            if(f.getTipFakture().equals(TipFakture.ULAZNA_FAKTURA)){
-                ulazneFakture.add(f);
-            }
-        }
-        return ulazneFakture;
-    }
-
-    public List<Faktura> findIzlazneFakture(){
-        List<Faktura> izlazneFakture = new ArrayList<>();
-        for(Faktura f : fakturaRepository.findAll()){
-            if(f.getTipFakture().equals(TipFakture.IZLAZNA_FAKTURA)){
-                izlazneFakture.add(f);
-            }
-        }
-        return izlazneFakture;
     }
 
     @Override
@@ -98,10 +79,21 @@ public class FakturaService implements IFakturaService {
     }
 
     public Faktura save(Faktura faktura){
+        Double prodajnaVrednost = faktura.getProdajnaVrednost();
+        Double rabatProcenat = faktura.getRabatProcenat();
+        Double porezProcenat = faktura.getPorezProcenat();
+
+        Double rabat = FakturaUtil.calculateRabat(prodajnaVrednost, rabatProcenat);
+        Double porez = FakturaUtil.calculatePorez(prodajnaVrednost, rabat, porezProcenat);
+        Double iznos = FakturaUtil.calculateIznos(prodajnaVrednost, rabat, porez);
+
+        faktura.setRabat(rabat);
+        faktura.setPorez(porez);
+        faktura.setIznos(iznos);
+
         return fakturaRepository.save(faktura);
     }
 
-    @Override
     public void deleteById(Long id) {
         fakturaRepository.deleteById(id);
     }

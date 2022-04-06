@@ -10,6 +10,8 @@ import rs.raf.demo.services.IKontnaGrupaService;
 
 import java.util.*;
 
+import static rs.raf.demo.utils.ApiUtil.*;
+
 @Service
 public class KontnaGrupaService implements IKontnaGrupaService {
     KontnaGrupaRepository kontnaGrupaRepository;
