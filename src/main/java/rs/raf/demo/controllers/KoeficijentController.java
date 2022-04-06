@@ -8,6 +8,8 @@ import rs.raf.demo.model.Koeficijent;
 import rs.raf.demo.services.IService;
 import rs.raf.demo.services.impl.KoeficijentService;
 
+import javax.persistence.EntityNotFoundException;
+
 @CrossOrigin
 @RestController
 @SecurityRequirement(name = "bearerAuth")
@@ -26,7 +28,9 @@ public class KoeficijentController {
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> update(@RequestBody Koeficijent koeficijent) {
-        return ResponseEntity.ok(koeficijentService.save(koeficijent));
+        if (koeficijentService.findById(koeficijent.getKoeficijentId()).isPresent())
+            return ResponseEntity.ok(koeficijentService.save(koeficijent));
+        throw new EntityNotFoundException();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
