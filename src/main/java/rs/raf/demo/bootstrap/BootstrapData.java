@@ -1,5 +1,6 @@
 package rs.raf.demo.bootstrap;
 
+import net.bytebuddy.utility.RandomString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,7 @@ import rs.raf.demo.model.enums.TipFakture;
 import rs.raf.demo.repositories.*;
 import rs.raf.demo.responses.KnjizenjeResponse;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class BootstrapData implements CommandLineRunner {
@@ -73,6 +71,8 @@ public class BootstrapData implements CommandLineRunner {
         f1.setPorezProcenat(1.00);
         f1.setProdajnaVrednost(1000.00);
         f1.setValuta("EUR");
+        f1.setBrojDokumenta("1234");
+        f1.setRokZaPlacanje(new Date());
         f1.setTipDokumenta(TipDokumenta.FAKTURA);
 
         return f1;
@@ -138,11 +138,15 @@ public class BootstrapData implements CommandLineRunner {
         Faktura f4 = getDefaultFaktura();
         f4.setIznos(4000.00);
 
+        Faktura f5 = getDefaultFaktura();
+        f5.setIznos(3000.00);
+        f5.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
 
         this.fakturaRepository.save(f1);
         this.fakturaRepository.save(f2);
         this.fakturaRepository.save(f3);
         this.fakturaRepository.save(f4);
+        this.fakturaRepository.save(f5);
 
         KontnaGrupa kg1 = new KontnaGrupa();
         kg1.setBrojKonta("0");

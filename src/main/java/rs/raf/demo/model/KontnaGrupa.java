@@ -13,6 +13,9 @@ import java.util.List;
 public class KontnaGrupa {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long kontnaGrupaId;
+    @Column(nullable = false)
     @NotBlank(message = "Broj konta je obavezan")
     private String brojKonta;
     @Column(nullable = false)

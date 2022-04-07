@@ -30,16 +30,14 @@ public class KontnaGrupaService implements IKontnaGrupaService {
     }
 
     @Override
-    public Optional<KontnaGrupa> findById(String id) {
+    public Optional<KontnaGrupa> findById(Long id) {
         return kontnaGrupaRepository.findById(id);
     }
 
-    public KontnaGrupa findKontnaGrupaById(String id) {
-        return findById(id).orElseThrow(NoSuchElementException::new);
-    }
 
-    public KontnaGrupa update(String id) {
-        return save(findById(id).orElseThrow(NoSuchElementException::new));
+    @Override
+    public KontnaGrupa findKontnaGrupaById(Long id) {
+        return findById(id).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
@@ -51,7 +49,7 @@ public class KontnaGrupaService implements IKontnaGrupaService {
     }
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(Long id) {
         kontnaGrupaRepository.deleteById(id);
     }
 
