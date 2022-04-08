@@ -18,7 +18,6 @@ import java.util.Optional;
 public class KontnaGrupaService implements IKontnaGrupaService {
     KontnaGrupaRepository kontnaGrupaRepository;
 
-
     @Autowired
     public KontnaGrupaService(KontnaGrupaRepository kontnaGrupaRepository) {
         this.kontnaGrupaRepository = kontnaGrupaRepository;
@@ -29,17 +28,8 @@ public class KontnaGrupaService implements IKontnaGrupaService {
         return kontnaGrupaRepository.save(kontnaGrupa);
     }
 
-    @Override
-    public Optional<KontnaGrupa> findById(String id) {
+    public Optional<KontnaGrupa> findById(Long id) {
         return kontnaGrupaRepository.findById(id);
-    }
-
-    public KontnaGrupa findKontnaGrupaById(String id) {
-        return findById(id).orElseThrow(NoSuchElementException::new);
-    }
-
-    public KontnaGrupa update(String id) {
-        return save(findById(id).orElseThrow(NoSuchElementException::new));
     }
 
     @Override
@@ -51,7 +41,7 @@ public class KontnaGrupaService implements IKontnaGrupaService {
     }
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(Long id) {
         kontnaGrupaRepository.deleteById(id);
     }
 
