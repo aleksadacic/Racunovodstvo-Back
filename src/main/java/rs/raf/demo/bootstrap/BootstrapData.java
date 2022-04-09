@@ -7,14 +7,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import rs.raf.demo.model.*;
+import rs.raf.demo.model.enums.PolZaposlenog;
+import rs.raf.demo.model.enums.RadnaPozicija;
+import rs.raf.demo.model.enums.StatusZaposlenog;
 import rs.raf.demo.model.enums.TipDokumenta;
 import rs.raf.demo.model.enums.TipFakture;
 import rs.raf.demo.repositories.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class BootstrapData implements CommandLineRunner {
@@ -28,6 +28,9 @@ public class BootstrapData implements CommandLineRunner {
     private final KontnaGrupaRepository kontnaGrupaRepository;
     private final KontoRepository kontoRepository;
     private final KnjizenjeRepository knjizenjeRepository;
+    private final ZaposleniRepository zaposleniRepository;
+    private final StazRepository stazRepository;
+    private final PlataRepository plataRepository;
 
     @Autowired
     public BootstrapData(UserRepository userRepository,
@@ -37,15 +40,21 @@ public class BootstrapData implements CommandLineRunner {
                          KontoRepository kontoRepository,
                          KontnaGrupaRepository kontnaGrupaRepository,
                          KnjizenjeRepository knjizenjeRepository,
-                         PreduzeceRepository preduzeceRepository) {
+                         PreduzeceRepository preduzeceRepository,
+                         ZaposleniRepository zaposleniRepository,
+                         StazRepository stazRepository,
+                         PlataRepository plataRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.permissionRepository = permissionRepository;
         this.fakturaRepository = fakturaRepository;
         this.preduzeceRepository = preduzeceRepository;
+        this.passwordEncoder = passwordEncoder;
         this.kontoRepository = kontoRepository;
-        this.kontnaGrupaRepository = kontnaGrupaRepository;
         this.knjizenjeRepository = knjizenjeRepository;
+        this.kontnaGrupaRepository = kontnaGrupaRepository;
+        this.zaposleniRepository = zaposleniRepository;
+        this.stazRepository = stazRepository;
+        this.plataRepository = plataRepository;
     }
 
     private Preduzece getDefaultPreduzece(){
@@ -72,6 +81,8 @@ public class BootstrapData implements CommandLineRunner {
         f1.setPorezProcenat(1.00);
         f1.setProdajnaVrednost(1000.00);
         f1.setValuta("EUR");
+        f1.setBrojDokumenta("1234");
+        f1.setRokZaPlacanje(new Date());
         f1.setTipDokumenta(TipDokumenta.FAKTURA);
 
         return f1;
@@ -137,11 +148,15 @@ public class BootstrapData implements CommandLineRunner {
         Faktura f4 = getDefaultFaktura();
         f4.setIznos(4000.00);
 
+        Faktura f5 = getDefaultFaktura();
+        f5.setIznos(3000.00);
+        f5.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
 
         this.fakturaRepository.save(f1);
         this.fakturaRepository.save(f2);
         this.fakturaRepository.save(f3);
         this.fakturaRepository.save(f4);
+        this.fakturaRepository.save(f5);
 
         KontnaGrupa kg1 = new KontnaGrupa();
         kg1.setBrojKonta("0");
@@ -155,7 +170,9 @@ public class BootstrapData implements CommandLineRunner {
         Knjizenje knj1 = new Knjizenje();
         knj1.setDatumKnjizenja(new Date());
         Knjizenje knj2 = new Knjizenje();
+        knj1.setBrojNaloga("N123S3");
         knj2.setDatumKnjizenja(new Date());
+        knj2.setBrojNaloga("N123FF3");
         this.knjizenjeRepository.save(knj1);
         this.knjizenjeRepository.save(knj2);
 
@@ -181,6 +198,58 @@ public class BootstrapData implements CommandLineRunner {
         k4.setKnjizenje(knj2);
 
         this.kontoRepository.saveAll(Arrays.asList(k1, k2, k3, k4));
+
+        Konto konto1 = new Konto();
+        konto1.setDuguje(1000.0);
+        konto1.setPotrazuje(500.0);
+        konto1 = kontoRepository.save(konto1);
+
+        Konto konto2 = new Konto();
+        konto2.setDuguje(2000.0);
+        konto2.setPotrazuje(1000.0);
+        kontoRepository.save(konto2);
+
+        Konto konto3 = new Konto();
+        konto3.setDuguje(0.0);
+        konto3.setPotrazuje(1000.0);
+        kontoRepository.save(konto3);
+
+        Knjizenje knjizenje = new Knjizenje();
+
+        kontoRepository.save(konto1);
+        knjizenje.setKnjizenjeId(1L);
+        knjizenje.setKonto(List.of(konto1, konto2, konto3));
+        knjizenje.setDatumKnjizenja(new Date());
+        knjizenje.setBrojNaloga("N 1234");
+        knjizenjeRepository.save(knjizenje);
+        konto1.setKnjizenje(knjizenje);
+        konto2.setKnjizenje(knjizenje);
+        konto3.setKnjizenje(knjizenje);
+        kontoRepository.save(konto1);
+
+        Zaposleni zaposleni = new Zaposleni();
+        zaposleni.setIme("Marko");
+        zaposleni.setPrezime("Markovic");
+        zaposleni.setPocetakRadnogOdnosa(new Date());
+        zaposleni.setJmbg("1234567890123");
+        zaposleni.setPol(PolZaposlenog.MUSKO);
+        zaposleni.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
+        zaposleni.setDatumRodjenja(new Date());
+        zaposleni.setRadnaPozicija(RadnaPozicija.DIREKTOR);
+        zaposleniRepository.save(zaposleni);
+
+        Plata plata = new Plata();
+        plata.setNetoPlata(100000.0);
+        plata.setZaposleni(zaposleni);
+        plata.setDatum(new Date());
+        plataRepository.save(plata);
+
+        Staz staz = new Staz();
+        staz.setPocetakRada(new Date());
+        staz.setKrajRada(null);
+        staz.setZaposleni(zaposleni);
+        stazRepository.save(staz);
+
 
         log.info("Data loaded!");
     }

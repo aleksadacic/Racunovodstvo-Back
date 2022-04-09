@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 public class KoeficijentService implements IService<Koeficijent, Long> {
-    private KoeficijentRepository koeficijentRepository;
+    public final KoeficijentRepository koeficijentRepository;
 
     public KoeficijentService(KoeficijentRepository koeficijentRepository) {
         this.koeficijentRepository = koeficijentRepository;
@@ -18,21 +18,25 @@ public class KoeficijentService implements IService<Koeficijent, Long> {
 
     @Override
     public <S extends Koeficijent> S save(S var1) {
-        return koeficijentRepository.save(var1);
+        return this.koeficijentRepository.save(var1);
     }
 
     @Override
     public Optional<Koeficijent> findById(Long var1) {
-        return koeficijentRepository.findById(var1);
+        return this.koeficijentRepository.findById(var1);
     }
 
     @Override
     public List<Koeficijent> findAll() {
-        return koeficijentRepository.findAll();
+        return this.koeficijentRepository.findAll();
     }
 
     @Override
     public void deleteById(Long var1) {
-        koeficijentRepository.deleteById(var1);
+        this.koeficijentRepository.deleteById(var1);
+    }
+
+    public Koeficijent getCurrentKoeficijent() {
+        return this.koeficijentRepository.findTopByOrderByDateDesc();
     }
 }
