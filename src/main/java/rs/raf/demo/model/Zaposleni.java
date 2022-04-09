@@ -1,6 +1,5 @@
 package rs.raf.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import rs.raf.demo.model.enums.PolZaposlenog;
@@ -51,7 +50,6 @@ public class Zaposleni {
     private String stepenObrazovanja;
     @Column
     private Long brojRadneKnjizice;
-    @JsonIgnore
     @OneToMany(mappedBy = "zaposleni")
     private List<Staz> staz;
     @Column
