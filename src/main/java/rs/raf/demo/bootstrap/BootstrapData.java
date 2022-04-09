@@ -227,6 +227,14 @@ public class BootstrapData implements CommandLineRunner {
         konto3.setKnjizenje(knjizenje);
         kontoRepository.save(konto1);
 
+        Staz staz = new Staz();
+        staz.setPocetakRada(new Date());
+        staz.setKrajRada(null);
+        stazRepository.save(staz);
+
+        List<Staz> stazevi = new ArrayList<>();
+        stazevi.add(staz);
+
         Zaposleni zaposleni = new Zaposleni();
         zaposleni.setIme("Marko");
         zaposleni.setPrezime("Markovic");
@@ -236,6 +244,7 @@ public class BootstrapData implements CommandLineRunner {
         zaposleni.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         zaposleni.setDatumRodjenja(new Date());
         zaposleni.setRadnaPozicija(RadnaPozicija.DIREKTOR);
+        zaposleni.setStaz(stazevi);
         zaposleniRepository.save(zaposleni);
 
         Plata plata = new Plata();
@@ -243,12 +252,6 @@ public class BootstrapData implements CommandLineRunner {
         plata.setZaposleni(zaposleni);
         plata.setDatum(new Date());
         plataRepository.save(plata);
-
-        Staz staz = new Staz();
-        staz.setPocetakRada(new Date());
-        staz.setKrajRada(null);
-        staz.setZaposleni(zaposleni);
-        stazRepository.save(staz);
 
 
         log.info("Data loaded!");
