@@ -7,5 +7,5 @@ import rs.raf.demo.reports.TableReport;
 
 public interface IKontnaGrupaService extends IService<KontnaGrupa, Long> {
     Page<KontnaGrupa> findAll(Pageable sort);
-    TableReport makeBrutoBilansTableReport(String user);
+    TableReport makeBrutoBilansTableReport(String user, String title, Pageable sort);
 }

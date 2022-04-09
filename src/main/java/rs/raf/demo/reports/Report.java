@@ -5,12 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Report {
+public abstract class Report implements Reports {
     protected String title;
     protected String author;
     protected String footer;
 
-    public Report(String title, String author, String footer) {
+    protected Report(String title, String author, String footer) {
         setTitle(title);
         setAuthor(author);
         setFooter(footer);

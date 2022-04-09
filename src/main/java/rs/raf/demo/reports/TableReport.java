@@ -18,6 +18,7 @@ public class TableReport extends Report {
         setRows(rows);
     }
 
+    @Override
     public byte[] getReport() throws DocumentException {
         return ReportBuilder.generateTableReport(author, title, rows, columns, footer).toByteArray();
     }
