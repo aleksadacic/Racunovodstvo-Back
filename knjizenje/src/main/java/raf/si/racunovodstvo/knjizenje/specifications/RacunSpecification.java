@@ -1,30 +1,20 @@
-package raf.si.racunovodstvo.knjizenje.specifications;
+package rs.raf.demo.specifications;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
-import raf.si.racunovodstvo.knjizenje.exceptions.OperationNotSupportedException;
-import raf.si.racunovodstvo.knjizenje.model.Dokument;
-import raf.si.racunovodstvo.knjizenje.model.KontnaGrupa;
-import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
-import raf.si.racunovodstvo.knjizenje.relations.DateRelations;
-import raf.si.racunovodstvo.knjizenje.relations.DokumentRelations;
-import raf.si.racunovodstvo.knjizenje.relations.DoubleRelations;
-import raf.si.racunovodstvo.knjizenje.relations.KontnaGrupaRelations;
-import raf.si.racunovodstvo.knjizenje.relations.LongRelations;
-import raf.si.racunovodstvo.knjizenje.relations.RacunRelations;
-import raf.si.racunovodstvo.knjizenje.relations.StringRelations;
-import raf.si.racunovodstvo.knjizenje.relations.TipFaktureRelations;
+import rs.raf.demo.exceptions.OperationNotSupportedException;
+import rs.raf.demo.model.Dokument;
+import rs.raf.demo.model.KontnaGrupa;
+import rs.raf.demo.model.Preduzece;
+import rs.raf.demo.model.enums.RadnaPozicija;
+import rs.raf.demo.model.enums.StatusZaposlenog;
+import rs.raf.demo.model.enums.TipFakture;
+import rs.raf.demo.relations.*;
+
+import javax.persistence.criteria.*;
 
 import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 
 @AllArgsConstructor
@@ -47,6 +37,9 @@ public class RacunSpecification<T> implements Specification<T> {
         if (Double.class == keyType) {
             return new DoubleRelations<>(root, builder, key, val);
         }
+        if (Preduzece.class == keyType) {
+            return new PreduzeceRelations<>(root, builder, key, val);
+        }
         if (Dokument.class == keyType) {
             return new DokumentRelations<>(root, builder, key, val);
         }
@@ -55,6 +48,12 @@ public class RacunSpecification<T> implements Specification<T> {
         }
         if (KontnaGrupa.class == keyType) {
             return new KontnaGrupaRelations<>(root, builder, key, val);
+        }
+        if (RadnaPozicija.class == keyType) {
+            return new RadnaPozicijaRelations(root, builder, key, val);
+        }
+        if (StatusZaposlenog.class == keyType) {
+            return new StatusZaposlenogRelations(root, builder, key, val);
         }
 
         throw new OperationNotSupportedException(String.format("Josuvek nije podrzano filtriranje po tipu %s(%s)", key, keyType));
@@ -68,10 +67,6 @@ public class RacunSpecification<T> implements Specification<T> {
         // join radi samo sa equal trenutno (nezavisno od prosledjene operacije), treba generalizovati
         if (isJoiningRequired(criteria.getKey())) {
             Expression exception = getExpresionForJoinedTable(root);
-
-            if(criteria.getKey().toLowerCase().contains("datum")){
-                return builder.equal(exception, new Date(Long.parseLong(criteria.getValue().toString())*1000));
-            }
             return builder.equal(exception, criteria.getValue().toString());
         }
 

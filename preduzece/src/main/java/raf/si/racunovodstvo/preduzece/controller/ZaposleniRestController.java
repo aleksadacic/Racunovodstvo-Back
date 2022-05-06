@@ -1,13 +1,13 @@
-package raf.si.racunovodstvo.preduzece.controller;
+package rs.raf.demo.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import raf.si.racunovodstvo.preduzece.model.Zaposleni;
-import raf.si.racunovodstvo.preduzece.services.IZaposleniService;
-import raf.si.racunovodstvo.preduzece.specifications.RacunSpecificationsBuilder;
+import rs.raf.demo.model.Zaposleni;
+import rs.raf.demo.services.IZaposleniService;
+import rs.raf.demo.specifications.RacunSpecificationsBuilder;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
@@ -26,6 +26,7 @@ public class ZaposleniRestController {
 
     public ZaposleniRestController(IZaposleniService iZaposleniService) {
         this.iZaposleniService = iZaposleniService;
+
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -36,7 +37,7 @@ public class ZaposleniRestController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateZaposleni(@Valid @RequestBody Zaposleni zaposleni,  @PathVariable Long id) {
         if (iZaposleniService.findById(id).isPresent())
-            return ResponseEntity.ok(iZaposleniService.updateZaposleni(zaposleni));
+            return ResponseEntity.ok(iZaposleniService.save(zaposleni));
         throw new EntityNotFoundException();
     }
 

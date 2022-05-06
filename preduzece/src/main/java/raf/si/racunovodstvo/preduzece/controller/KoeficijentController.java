@@ -1,12 +1,12 @@
-package raf.si.racunovodstvo.preduzece.controller;
+package rs.raf.demo.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import raf.si.racunovodstvo.preduzece.model.Koeficijent;
-import raf.si.racunovodstvo.preduzece.services.IService;
-import raf.si.racunovodstvo.preduzece.services.impl.KoeficijentService;
+import rs.raf.demo.model.Koeficijent;
+import rs.raf.demo.services.IService;
+import rs.raf.demo.services.impl.KoeficijentService;
 
 import javax.persistence.EntityNotFoundException;
 
