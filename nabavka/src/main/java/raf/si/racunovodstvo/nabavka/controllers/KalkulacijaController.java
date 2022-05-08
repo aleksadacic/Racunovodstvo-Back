@@ -36,10 +36,10 @@ public class KalkulacijaController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> searchKalkulacija(
-        @RequestParam(name = "search", required = false, defaultValue = "") String search,
-        @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
-        @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
-        @RequestParam(defaultValue = "brojKalkulacije") String[] sort
+            @RequestParam(name = "search", required = false, defaultValue = "") String search,
+            @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
+            @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
+            @RequestParam(defaultValue = "brojKalkulacije") String[] sort
     ) {
         if (search.isEmpty()) {
             return ResponseEntity.ok(this.kalkulacijaService.findAll());
@@ -48,5 +48,17 @@ public class KalkulacijaController {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
         Specification<Kalkulacija> spec = this.searchUtil.getSpec(search);
         return ResponseEntity.ok(this.kalkulacijaService.findAll(spec, pageSort));
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getTotalKalkulacije(
+            @RequestParam(name = "search", required = false, defaultValue = "") String search,
+            @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
+            @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
+            @RequestParam(defaultValue = "brojKalkulacije") String[] sort) {
+
+        Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
+        Specification<Kalkulacija> spec = this.searchUtil.getSpec(search);
+        return ResponseEntity.ok(this.kalkulacijaService.getTotalKalkulacije(spec, pageSort));
     }
 }
