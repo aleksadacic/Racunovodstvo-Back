@@ -50,7 +50,7 @@ public class KalkulacijaController {
         return ResponseEntity.ok(this.kalkulacijaService.findAll(spec, pageSort));
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/total", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getTotalKalkulacije(
             @RequestParam(name = "search", required = false, defaultValue = "") String search,
             @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
