@@ -7,7 +7,10 @@ import raf.si.racunovodstvo.nabavka.converters.IConverter;
 import raf.si.racunovodstvo.nabavka.converters.impl.ArtikalConverter;
 import raf.si.racunovodstvo.nabavka.converters.impl.ArtikalReverseConverter;
 import raf.si.racunovodstvo.nabavka.model.Artikal;
+import raf.si.racunovodstvo.nabavka.model.Konverzija;
+import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
 import raf.si.racunovodstvo.nabavka.repositories.ArtikalRepository;
+import raf.si.racunovodstvo.nabavka.repositories.KonverzijaRepository;
 import raf.si.racunovodstvo.nabavka.requests.ArtikalRequest;
 import raf.si.racunovodstvo.nabavka.responses.ArtikalResponse;
 import raf.si.racunovodstvo.nabavka.services.IArtikalService;
@@ -23,13 +26,15 @@ public class ArtikalService implements IArtikalService {
     private final ArtikalRepository artikalRepository;
     private final IConverter<Artikal, ArtikalResponse> artikalReverseConverter;
     private final IConverter<ArtikalRequest, Artikal> artikalConverter;
+    private final KonverzijaRepository konverzijaRepository;
 
     public ArtikalService(ArtikalRepository artikalRepository,
                           ArtikalReverseConverter artikalReverseConverter,
-                          ArtikalConverter artikalConverter) {
+                          ArtikalConverter artikalConverter, KonverzijaRepository konverzijaRepository) {
         this.artikalRepository = artikalRepository;
         this.artikalReverseConverter = artikalReverseConverter;
         this.artikalConverter = artikalConverter;
+        this.konverzijaRepository = konverzijaRepository;
     }
 
     @Override
@@ -39,8 +44,13 @@ public class ArtikalService implements IArtikalService {
 
     @Override
     public ArtikalResponse save(ArtikalRequest artikalRequest) {
+
+        System.out.println("TU SAm");
         Artikal converted = artikalConverter.convert(artikalRequest);
-        return artikalReverseConverter.convert(artikalRepository.save(converted));
+
+        ArtikalResponse konvertovan = artikalReverseConverter.convert(artikalRepository.save(converted));
+
+        return konvertovan;
     }
 
     @Override
