@@ -51,7 +51,7 @@ public class KalkulacijaService implements IKalkulacijaService {
     }
 
     @Override
-    public Map<String, Number> getTotalKalkulacije(Specification<Kalkulacija> spec, Pageable pageSort) {
+    public Map<String, Number> getTotalKalkulacije(List<Kalkulacija> kalkulacije) {
         Map<String, Number> values = new HashMap<>();
         Integer totalKolicina = 0;
         Double totalRabat = 0.0;
@@ -64,7 +64,6 @@ public class KalkulacijaService implements IKalkulacijaService {
         Double totalProdajnaCena = 0.0;
         Double totalPoreskaOsnovica = 0.0;
         Double totalProdajnaVrednost = 0.0;
-        List<Kalkulacija> kalkulacije = kalkulacijaRepository.findAll(spec, pageSort).toList();
         for (Kalkulacija kalkulacija : kalkulacije) {
             Stream<KalkulacijaArtikal>  artikliStream= kalkulacija.getArtikli().stream();
 

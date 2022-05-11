@@ -5,11 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import raf.si.racunovodstvo.nabavka.model.Kalkulacija;
 import raf.si.racunovodstvo.nabavka.services.IKalkulacijaService;
 import raf.si.racunovodstvo.nabavka.services.impl.KalkulacijaService;
@@ -57,8 +53,12 @@ public class KalkulacijaController {
             @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
             @RequestParam(defaultValue = "brojKalkulacije") String[] sort) {
 
+        if (search.isEmpty()) {
+            return ResponseEntity.ok(kalkulacijaService.getTotalKalkulacije(kalkulacijaService.findAll()));
+        }
+
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
         Specification<Kalkulacija> spec = this.searchUtil.getSpec(search);
-        return ResponseEntity.ok(this.kalkulacijaService.getTotalKalkulacije(spec, pageSort));
+        return ResponseEntity.ok(this.kalkulacijaService.getTotalKalkulacije(kalkulacijaService.findAll(spec, pageSort).toList()));
     }
 }
