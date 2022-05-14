@@ -5,6 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import raf.si.racunovodstvo.nabavka.model.Kalkulacija;
 
+import java.util.List;
+import java.util.Map;
+
 public interface IKalkulacijaService extends IService<Kalkulacija, Long> {
 
     Page<Kalkulacija> findAll(Specification<Kalkulacija> spec, Pageable pageSort);
