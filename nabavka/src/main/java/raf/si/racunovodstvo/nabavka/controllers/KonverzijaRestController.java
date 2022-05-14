@@ -10,13 +10,12 @@ import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
+import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.PreduzeceResponse;
-import raf.si.racunovodstvo.nabavka.utils.ApiUtil;
 import raf.si.racunovodstvo.nabavka.utils.SearchUtil;
+import raf.si.racunovodstvo.nabavka.utils.ApiUtil;
 
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
-import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.KonverzijaResponse;
 import raf.si.racunovodstvo.nabavka.services.impl.KonverzijaService;
 import raf.si.racunovodstvo.nabavka.services.IKonverzijaService;
@@ -26,6 +25,7 @@ import javax.persistence.PersistenceException;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+
 import java.io.IOException;
 import java.util.Optional;
 
@@ -38,11 +38,11 @@ public class KonverzijaRestController {
 
     private final IKonverzijaService iKonverzijaService;
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     private final SearchUtil<Konverzija> searchUtil;
 
-    private String URL = "http://preduzece/api/preduzece/%d";
+    private static final String URL = "http://preduzece/api/preduzece/%d";
 
     public KonverzijaRestController(KonverzijaService iKonverzijaService, RestTemplate restTemplate) {
         this.iKonverzijaService = iKonverzijaService;
@@ -51,7 +51,7 @@ public class KonverzijaRestController {
     }
 
     private PreduzeceResponse getPreduzeceById(Long id, String token) throws IOException {
-        if(id == null){
+        if (id == null) {
             return null;
         }
         HttpHeaders headers = new HttpHeaders();
@@ -66,30 +66,33 @@ public class KonverzijaRestController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> search(@RequestParam(name = "search") String search,
+    public ResponseEntity<?> search(@RequestParam(name = "search", required = false, defaultValue = "") String search,
                                     @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
                                     @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
-                                    @RequestParam(defaultValue = "-konverzijaId") String[] sort, @RequestHeader(name="Authorization") String token) throws IOException {
-
+                                    @RequestParam(defaultValue = "-id") String[] sort,
+                                    @RequestHeader(name = "Authorization") String token) {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
-
-        Specification<Konverzija> spec = searchUtil.getSpec(search);
+        Specification<Konverzija> spec = null;
+        if (!search.isBlank()) {
+            spec = searchUtil.getSpec(search);
+        }
         Page<KonverzijaResponse> result = iKonverzijaService.findAll(spec, pageSort);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createKonverzija(@Valid @RequestBody KonverzijaRequest konverzija, @RequestHeader(name="Authorization") String token) throws IOException {
-        if(getPreduzeceById(konverzija.getDobavljacId(), token)== null){
-            throw new PersistenceException(String.format("Ne postoji dobavljac sa id-jem %s",konverzija.getDobavljacId()));
+    public ResponseEntity<?> createKonverzija(@Valid @RequestBody KonverzijaRequest konverzija,
+                                              @RequestHeader(name = "Authorization") String token) throws IOException {
+        if (getPreduzeceById(konverzija.getDobavljacId(), token) == null) {
+            throw new PersistenceException(String.format("Ne postoji dobavljac sa id-jem %s", konverzija.getDobavljacId()));
         }
         return ResponseEntity.ok(iKonverzijaService.saveKonverzija(konverzija));
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteKonverzija(@PathVariable("id") Long id){
+    public ResponseEntity<?> deleteKonverzija(@PathVariable("id") Long id) {
         Optional<Konverzija> optionalKonverzija = iKonverzijaService.findById(id);
-        if (optionalKonverzija.isPresent()){
+        if (optionalKonverzija.isPresent()) {
             iKonverzijaService.deleteById(id);
             return ResponseEntity.noContent().build();
         }

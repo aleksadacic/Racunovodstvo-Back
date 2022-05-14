@@ -24,4 +24,3 @@ public class PreduzeceResponse {
     private String komentar;
     private Boolean isActive;
 }
-

@@ -15,4 +15,5 @@ public interface IKonverzijaService extends IService<Konverzija, Long> {
 
     Konverzija saveKonverzija(KonverzijaRequest konverzijaRequest);
 
+    Konverzija increaseNabavnaCena(Long konverzijaId, Double increaseBy);
 }
