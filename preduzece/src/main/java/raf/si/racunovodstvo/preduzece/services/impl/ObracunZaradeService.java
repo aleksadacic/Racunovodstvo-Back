@@ -44,12 +44,14 @@ public class ObracunZaradeService implements IService<ObracunZarade, Long> {
     }
 
     public ObracunZarade updateObracunZaradeNaziv(Long id, String naziv) {
-        if (!obracunZaradeRepository.findById(id).isPresent())
-            throw new EntityNotFoundException();
-        ObracunZarade obracunZarade = obracunZaradeRepository.findById(id).get();
-        obracunZarade.setNaziv(naziv);
-        obracunZaradeRepository.save(obracunZarade);
-        return obracunZarade;
+        Optional<ObracunZarade> obracunZaradeOptional = obracunZaradeRepository.findById(id);
+        if (obracunZaradeOptional.isPresent()) {
+            ObracunZarade obracunZarade = obracunZaradeOptional.get();
+            obracunZarade.setNaziv(naziv);
+            obracunZaradeRepository.save(obracunZarade);
+            return obracunZarade;
+        }
+        throw new EntityNotFoundException();
     }
 
     private ObracunZarade makeObracunZaradeObject(ObracunZaposleni obracunZaposleni, Plata plata, Date dateTime) {
