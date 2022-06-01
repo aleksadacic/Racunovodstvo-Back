@@ -10,6 +10,7 @@ import raf.si.racunovodstvo.preduzece.repositories.ObracunZaradeRepository;
 import raf.si.racunovodstvo.preduzece.repositories.PlataRepository;
 import raf.si.racunovodstvo.preduzece.services.IService;
 
+import javax.persistence.EntityNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -32,10 +33,10 @@ public class ObracunZaradeService implements IService<ObracunZarade, Long> {
         List<ObracunZaposleni> obracunZaposleni = obracunZaposleniRepository.findByStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         Map<ObracunZaposleni, Plata> join = new HashMap<>();
         for (Plata plata : plate) {
-            ObracunZaposleni obracun = obracunZaposleni.stream()
+            Optional<ObracunZaposleni> obracunOptional = obracunZaposleni.stream()
                     .filter(oz -> oz.getZaposleni().getZaposleniId().equals(plata.getZaposleni().getZaposleniId()))
-                    .findFirst().get();
-            join.put(obracun, plata);
+                    .findFirst();
+            obracunOptional.ifPresent(zaposleni -> join.put(zaposleni, plata));
         }
         for (Map.Entry<ObracunZaposleni, Plata> entry : join.entrySet()) {
             obracunZaradeRepository.save(makeObracunZaradeObject(entry.getKey(), entry.getValue(), dateTime));
@@ -43,6 +44,8 @@ public class ObracunZaradeService implements IService<ObracunZarade, Long> {
     }
 
     public ObracunZarade updateObracunZaradeNaziv(Long id, String naziv) {
+        if (obracunZaradeRepository.findById(id).isEmpty())
+            throw new EntityNotFoundException();
         ObracunZarade obracunZarade = obracunZaradeRepository.findById(id).get();
         obracunZarade.setNaziv(naziv);
         obracunZaradeRepository.save(obracunZarade);
@@ -77,7 +80,9 @@ public class ObracunZaradeService implements IService<ObracunZarade, Long> {
 
     @Override
     public Optional<ObracunZarade> findById(Long var1) {
-        return obracunZaradeRepository.findById(var1);
+        if (obracunZaradeRepository.findById(var1).isPresent())
+            return obracunZaradeRepository.findById(var1);
+        throw new EntityNotFoundException();
     }
 
     @Override
@@ -86,5 +91,7 @@ public class ObracunZaradeService implements IService<ObracunZarade, Long> {
     }
 
     @Override
-    public void deleteById(Long var1) { }
+    public void deleteById(Long var1) {
+        //Nije specificirano.
+    }
 }
