@@ -1,9 +1,7 @@
 package raf.si.racunovodstvo.preduzece.controller;
 
-import com.ctc.wstx.util.StringUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
@@ -30,7 +28,7 @@ public class ObracunZaposleniController {
     private final IObracunZaposleniService iObracunZaposleniService;
     private final SearchUtil<ObracunZaposleni> searchUtil;
 
-    private ObracunZaposleniController(IObracunZaposleniService iObracunZaposleniService){
+    public ObracunZaposleniController(IObracunZaposleniService iObracunZaposleniService){
         this.iObracunZaposleniService = iObracunZaposleniService;
         this.searchUtil = new SearchUtil<>();
     }
@@ -71,6 +69,4 @@ public class ObracunZaposleniController {
     public ResponseEntity<?> update(@Validated(OnUpdate.class) @RequestBody ObracunZaposleniRequest obracunZaposleniRequest){
         return ResponseEntity.ok(iObracunZaposleniService.update(obracunZaposleniRequest));
     }
-
-
 }

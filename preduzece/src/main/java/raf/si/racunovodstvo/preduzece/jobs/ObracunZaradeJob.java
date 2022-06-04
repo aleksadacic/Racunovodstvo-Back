@@ -3,7 +3,7 @@ package raf.si.racunovodstvo.preduzece.jobs;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import raf.si.racunovodstvo.preduzece.services.impl.ObracunZaradeService;
+import raf.si.racunovodstvo.preduzece.services.impl.ObracunZaposleniService;
 
 import java.time.DateTimeException;
 import java.time.ZonedDateTime;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class ObracunZaradeJob {
-    final ObracunZaradeService obracunZaradeService;
+    final ObracunZaposleniService obracunZaposleniService;
     private ZonedDateTime nextDate;
 
     /**
@@ -25,14 +25,17 @@ public class ObracunZaradeJob {
     private int dayOfMonth = JobConstants.DEFAULT_DAY_OF_MONTH;
 
     public void setDayOfMonth(int dayOfMonth) throws DateTimeException {
-        ZonedDateTime.of(nextDate.getMonthValue(), dayOfMonth,
-                0, 0, 0, 0, 0, nextDate.getZone());
+        int hour = 19;
+        int minute = 0;
+        int second = 0;
+        ZonedDateTime.of(nextDate.getYear(), nextDate.getMonthValue(),
+                dayOfMonth, hour, minute, second, 0, nextDate.getZone());
         this.dayOfMonth = dayOfMonth;
     }
 
     @Autowired
-    public ObracunZaradeJob(ObracunZaradeService obracunZaradeService) {
-        this.obracunZaradeService = obracunZaradeService;
+    public ObracunZaradeJob(ObracunZaposleniService obracunZaposleniService) {
+        this.obracunZaposleniService = obracunZaposleniService;
         start();
     }
 
@@ -46,7 +49,7 @@ public class ObracunZaradeJob {
                 long delay = now.until(nextDate, ChronoUnit.MILLIS);
 
                 try {
-                    obracunZaradeService.makeObracunZarade(Date.from(now.toInstant()));
+                    obracunZaposleniService.makeObracun(Date.from(now.toInstant()));
                 } finally {
                     executor.schedule(this, delay, TimeUnit.MILLISECONDS);
                 }
