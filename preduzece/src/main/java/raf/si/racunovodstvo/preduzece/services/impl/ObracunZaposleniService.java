@@ -130,17 +130,18 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
         Obracun obracun = new Obracun();
         obracun.setDatumObracuna(dateTime);
         obracun.setNaziv(new SimpleDateFormat("MM/yy").format(dateTime));
+        obracun = obracunRepository.save(obracun);
         List<Plata> plate = plataRepository.findPlataByDatumAndStatusZaposlenog(dateTime, StatusZaposlenog.ZAPOSLEN);
         List<ObracunZaposleni> obracunZaposleniList = new ArrayList<>();
         for (Plata plata : plate) {
-            ObracunZaposleni obracunZaposleni = save(obracunZaposleniConverter.convert(makeObracunZaradeObject(plata)));
+            ObracunZaposleni obracunZaposleni = save(obracunZaposleniConverter.convert(makeObracunZaradeObject(plata, obracun.getObracunId())));
             obracunZaposleniList.add(obracunZaposleni);
         }
         obracun.setObracunZaposleniList(obracunZaposleniList);
         obracunRepository.save(obracun);
     }
 
-    private ObracunZaposleniRequest makeObracunZaradeObject(Plata plata) {
+    private ObracunZaposleniRequest makeObracunZaradeObject(Plata plata, Long obracunId) {
         ObracunZaposleniRequest obracunZarade = new ObracunZaposleniRequest();
         obracunZarade.setPorez(plata.getPorez());
         obracunZarade.setDoprinos1(plata.getDoprinos1());
@@ -150,6 +151,7 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
         obracunZarade.setUkupanTrosakZarade(plata.getUkupanTrosakZarade());
         obracunZarade.setKomentar(plata.getKomentar());
         obracunZarade.setUcinak(DEFAULT_UCINAK);
+        obracunZarade.setObracunId(obracunId);
         obracunZarade.setZaposleniId(plata.getZaposleni().getZaposleniId());
         return obracunZarade;
     }

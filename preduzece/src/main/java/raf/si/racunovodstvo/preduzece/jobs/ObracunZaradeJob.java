@@ -25,11 +25,8 @@ public class ObracunZaradeJob {
     private int dayOfMonth = JobConstants.DEFAULT_DAY_OF_MONTH;
 
     public void setDayOfMonth(int dayOfMonth) throws DateTimeException {
-        int hour = 19;
-        int minute = 0;
-        int second = 0;
         ZonedDateTime.of(nextDate.getYear(), nextDate.getMonthValue(),
-                dayOfMonth, hour, minute, second, 0, nextDate.getZone());
+                dayOfMonth, 0, 0, 0, 0, nextDate.getZone());
         this.dayOfMonth = dayOfMonth;
     }
 
@@ -50,6 +47,8 @@ public class ObracunZaradeJob {
 
                 try {
                     obracunZaposleniService.makeObracun(Date.from(now.toInstant()));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 } finally {
                     executor.schedule(this, delay, TimeUnit.MILLISECONDS);
                 }
@@ -61,6 +60,8 @@ public class ObracunZaradeJob {
             dateTime = dateTime.plusMonths(1);
         }
         dateTime = dateTime.withDayOfMonth(dayOfMonth);
+        // TEST
+        // Za test staviti dateTime = dateTime.withMonth(6).plusMinutes(1); ovo i zakomentarisati if iznad
         executor.schedule(task,
                 ZonedDateTime.now().until(dateTime, ChronoUnit.MILLIS),
                 TimeUnit.MILLISECONDS);
