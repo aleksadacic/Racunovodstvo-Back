@@ -77,15 +77,23 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
     }
 
     @Override
-    public ObracunZaposleni update(ObracunZaposleniRequest obracunZaposleniRequest) {
-
-        Optional<ObracunZaposleni> optionalObracunZaposleni = obracunZaposleniRepository.findById(obracunZaposleniRequest.getObracunZaposleniId());
+    public ObracunZaposleni update(Double ucinak, Double netoPlata, Long idObracunZaposleni) {
+        Optional<ObracunZaposleni> optionalObracunZaposleni = obracunZaposleniRepository.findById(idObracunZaposleni);
 
         if (optionalObracunZaposleni.isEmpty()) {
             throw new EntityNotFoundException();
         }
 
-        ObracunZaposleni obracunZaposleni = obracunZaposleniConverter.convert(obracunZaposleniRequest);
+        ObracunZaposleni obracunZaposleni = optionalObracunZaposleni.get();
+
+        if(ucinak != null){
+            obracunZaposleni.setUcinak(ucinak);
+        }
+
+        if(netoPlata != null){
+            obracunZaposleni.setNetoPlata(netoPlata);
+        }
+
         izracunajUcinak(koeficijentService.getCurrentKoeficijent(), obracunZaposleni);
 
         return obracunZaposleniRepository.save(obracunZaposleni);

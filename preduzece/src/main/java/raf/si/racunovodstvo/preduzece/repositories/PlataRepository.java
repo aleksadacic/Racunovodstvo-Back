@@ -15,13 +15,17 @@ import java.util.Optional;
 @Repository
 public interface PlataRepository extends JpaRepository<Plata, Long> {
 
-    public List<Plata> findByZaposleniZaposleniId(Long zaposleniId);
+    List<Plata> findByZaposleniZaposleniId(Long zaposleniId);
 
-    public Optional<Plata> findByPlataId(Long plataId);
+    Optional<Plata> findByPlataId(Long plataId);
 
-    public List<Plata> findAll(Specification<Plata> spec);
+    List<Plata> findAll(Specification<Plata> spec);
 
     @Query("select p from Plata p where p.zaposleni = :zaposleni and (:datum >= p.datumOd and (p.datumDo is null or :datum <= p.datumDo))")
+    Plata findPlatabyDatumAndZaposleni(Date datum, Zaposleni zaposleni);
+
+    @Query("select p from Plata p where p.zaposleni.statusZaposlenog = :statusZaposlenog and (:datum >= p.datumOd and (p.datumDo is null or :datum <= p.datumDo))")
+    List<Plata> findPlataByDatumAndStatusZaposlenog(Date datum, StatusZaposlenog statusZaposlenog);
     public Plata findPlatabyDatumAndZaposleni(Date datum, Zaposleni zaposleni);
 
     @Query("select p from Plata p where p.zaposleni.statusZaposlenog = :statusZaposlenog and (:datum >= p.datumOd and (p.datumDo is null or :datum <= p.datumDo))")
