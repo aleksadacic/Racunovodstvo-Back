@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.preduzece.services.impl.ObracunZaposleniService;
 
 import java.time.DateTimeException;
+import java.time.YearMonth;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -25,9 +26,14 @@ public class ObracunZaradeJob {
     private int dayOfMonth = JobConstants.DEFAULT_DAY_OF_MONTH;
 
     public void setDayOfMonth(int dayOfMonth) throws DateTimeException {
-        ZonedDateTime.of(nextDate.getYear(), nextDate.getMonthValue(),
-                dayOfMonth, 0, 0, 0, 0, nextDate.getZone());
-        this.dayOfMonth = dayOfMonth;
+        YearMonth yearMonth = YearMonth.of(nextDate.getYear(), nextDate.getMonthValue());
+        if (yearMonth.lengthOfMonth() >= dayOfMonth)
+            this.dayOfMonth = dayOfMonth;
+        else throw new DateTimeException(
+                "Izabrani dan [" + dayOfMonth + "]"
+                        + " nije validan za mesec koji ima ["
+                        + yearMonth.lengthOfMonth()
+                        + "] u sledecoj iteraciji job-a.");
     }
 
     @Autowired
