@@ -44,11 +44,8 @@ public class ObracunZaradeJob {
                 ZonedDateTime now = ZonedDateTime.now();
                 nextDate = now.plusMonths(1).withDayOfMonth(dayOfMonth);
                 long delay = now.until(nextDate, ChronoUnit.MILLIS);
-
                 try {
                     obracunZaposleniService.makeObracun(Date.from(now.toInstant()));
-                } catch (Exception e) {
-                    e.printStackTrace();
                 } finally {
                     executor.schedule(this, delay, TimeUnit.MILLISECONDS);
                 }
