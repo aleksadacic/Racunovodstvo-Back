@@ -100,7 +100,6 @@ class ObracunZaradeRestControllerTest {
     void createObracunZarade() {
         Date date = new Date();
         given(obracunZaposleniService.makeObracun(date, 1L)).willReturn(new Obracun());
-        assertEquals(HttpStatus.OK, obracunZaradeRestController.createObracunZarade(date, 1L).getStatusCode());
-
+        assertEquals(HttpStatus.OK, obracunZaradeRestController.createObracunZarade(1L).getStatusCode());
     }
 }

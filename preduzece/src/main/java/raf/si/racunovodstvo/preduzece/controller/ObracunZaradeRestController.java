@@ -1,24 +1,21 @@
 package raf.si.racunovodstvo.preduzece.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import raf.si.racunovodstvo.preduzece.feign.TransakcijeFeignClient;
 import raf.si.racunovodstvo.preduzece.jobs.ObracunZaradeJob;
+import raf.si.racunovodstvo.preduzece.model.Obracun;
 import raf.si.racunovodstvo.preduzece.requests.ObracunZaradeConfigRequest;
 import raf.si.racunovodstvo.preduzece.responses.ObracunZaradeConfigResponse;
 import raf.si.racunovodstvo.preduzece.responses.SifraTransakcijeResponse;
 import raf.si.racunovodstvo.preduzece.services.impl.ObracunZaposleniService;
-import raf.si.racunovodstvo.preduzece.services.impl.ObracunZaradeService;
 import raf.si.racunovodstvo.preduzece.validation.groups.OnCreate;
 
 import javax.persistence.EntityNotFoundException;
-import javax.print.attribute.standard.Media;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Produces;
 import java.time.DateTimeException;
 import java.util.Date;
 
@@ -85,8 +82,8 @@ public class ObracunZaradeRestController {
     }
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createObracunZarade(@NotNull @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datum, @NotNull @RequestParam Long idTransakcije) {
-        return ResponseEntity.ok(obracunZaposleniService.makeObracun(datum, idTransakcije));
+    public ResponseEntity<Obracun> createObracunZarade(@NotNull @RequestParam Long idTransakcije) {
+        return ResponseEntity.ok(obracunZaposleniService.makeObracun(new Date(), idTransakcije));
     }
 }
 
