@@ -17,7 +17,6 @@ import raf.si.racunovodstvo.preduzece.validation.groups.OnCreate;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
 import java.time.DateTimeException;
-import java.util.Date;
 
 @CrossOrigin
 @RestController
@@ -83,7 +82,7 @@ public class ObracunZaradeRestController {
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Obracun> createObracunZarade(@NotNull @RequestParam Long idTransakcije) {
-        return ResponseEntity.ok(obracunZaposleniService.makeObracun(new Date(), idTransakcije));
+        return ResponseEntity.ok(obracunZaposleniService.makeObracunDefaultDate(idTransakcije));
     }
 }
 

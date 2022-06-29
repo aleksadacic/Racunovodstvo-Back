@@ -11,19 +11,16 @@ import raf.si.racunovodstvo.preduzece.feign.TransakcijeFeignClient;
 import raf.si.racunovodstvo.preduzece.jobs.ObracunZaradeJob;
 import raf.si.racunovodstvo.preduzece.model.Obracun;
 import raf.si.racunovodstvo.preduzece.requests.ObracunZaradeConfigRequest;
-import raf.si.racunovodstvo.preduzece.responses.ObracunZaradeConfigResponse;
 import raf.si.racunovodstvo.preduzece.responses.SifraTransakcijeResponse;
 import raf.si.racunovodstvo.preduzece.services.impl.ObracunZaposleniService;
-import raf.si.racunovodstvo.preduzece.services.impl.ZaposleniService;
 
 import javax.persistence.EntityNotFoundException;
-
 import java.time.DateTimeException;
-import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class ObracunZaradeRestControllerTest {
@@ -98,8 +95,7 @@ class ObracunZaradeRestControllerTest {
 
     @Test
     void createObracunZarade() {
-        Date date = new Date();
-        given(obracunZaposleniService.makeObracun(date, 1L)).willReturn(new Obracun());
+        given(obracunZaposleniService.makeObracunDefaultDate(1L)).willReturn(new Obracun());
         assertEquals(HttpStatus.OK, obracunZaradeRestController.createObracunZarade(1L).getStatusCode());
     }
 }

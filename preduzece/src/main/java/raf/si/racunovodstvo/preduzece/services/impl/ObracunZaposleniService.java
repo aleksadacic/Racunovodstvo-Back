@@ -127,6 +127,10 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
         obracunZaposleni.setUkupanTrosakZarade(obracunZaposleni.getBrutoPlata() + obracunZaposleni.getDoprinos2());
     }
 
+    public Obracun makeObracunDefaultDate(long sifraTransakcije) {
+        return makeObracun(new Date(), sifraTransakcije);
+    }
+
     public Obracun makeObracun(Date dateTime, long sifraTransakcijeId) {
         Obracun obracun = new Obracun();
         obracun.setDatumObracuna(dateTime);
